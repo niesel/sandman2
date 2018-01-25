@@ -232,7 +232,7 @@ class Service(MethodView):
                     limit = value
                 elif hasattr(self.__model__, key):
                     if like:
-                        filters.append(getattr(self.__model__, key).like(str(value), escape='/'))
+                        filters.append(getattr(self.__model__, key).like('%{}%'.format(str(value)), escape='/'))
                     elif gte:
                         filters.append(getattr(self.__model__, key) >= value)
                     elif lte:

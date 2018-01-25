@@ -5,7 +5,7 @@ from setuptools.command.test import test as TestCommand
 import codecs
 import os
 import sys
-import re
+# import re
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
@@ -15,6 +15,7 @@ def read(*parts):
     string."""
     # intentionally *not* adding an encoding option to open
     return codecs.open(os.path.join(HERE, *parts), 'r').read()
+
 
 LONG_DESCRIPTION = read('README.rst')
 
@@ -33,6 +34,7 @@ class PyTest(TestCommand):
         import pytest
         errno = pytest.main(self.test_args)
         sys.exit(errno)
+
 
 setup(
     name='sandman2mod',
