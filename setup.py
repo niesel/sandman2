@@ -35,16 +35,16 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 setup(
-    name='sandman2',
-    version='1.0.5',
-    url='http://github.com/jeffknupp/sandman2/',
+    name='sandman2mod',
+    version='1.0.7',
+    url='http://github.com/niesel/sandman2mod/',
     license='Apache Software License',
     author='Jeff Knupp',
     tests_require=['pytest', 'pytest-cov'],
     install_requires=[
         'Flask>=0.10.1',
         'Flask-SQLAlchemy>=1.0',
-        'SQLAlchemy==1.1.0b3',
+        'SQLAlchemy>=1.1.0b3',
         'pytest-flask>=0.4.0',
         'Flask-Admin>=1.0.9',
         'Flask-HTTPAuth>=3.1.2',

@@ -48,6 +48,7 @@ def is_valid_method(model, resource=None):
     if hasattr(model, validation_function_name):
         return getattr(model, validation_function_name)(request, resource)
 
+
 class Service(MethodView):
 
     """The *Service* class is a generic extension of Flask's *MethodView*,
@@ -211,14 +212,35 @@ class Service(MethodView):
             order = []
             limit = None
             for key, value in args.items():
-                if value.startswith('%'):
-                    filters.append(getattr(self.__model__, key).like(str(value), escape='/'))
-                elif key == 'sort':
+                gte = False
+                lte = False
+                ne = False
+                like = False
+                if key[-1:] in ('>', '<', '!', '%'):
+                    if key[-1:] == '>':
+                        gte = True
+                    elif key[-1:] == '<':
+                        lte = True
+                    elif key[-1:] == '!':
+                        ne = True
+                    elif key[-1:] == '%':
+                        like = True
+                    key = key[:-1]
+                if key == 'sort':
                     order.append(getattr(self.__model__, value))
                 elif key == 'limit':
                     limit = value
                 elif hasattr(self.__model__, key):
-                    filters.append(getattr(self.__model__, key) == value)
+                    if like:
+                        filters.append(getattr(self.__model__, key).like(str(value), escape='/'))
+                    elif gte:
+                        filters.append(getattr(self.__model__, key) >= value)
+                    elif lte:
+                        filters.append(getattr(self.__model__, key) <= value)
+                    elif ne:
+                        filters.append(getattr(self.__model__, key) != value)
+                    else:
+                        filters.append(getattr(self.__model__, key) == value)
                 else:
                     raise BadRequestException('Invalid field [{}]'.format(key))
                 queryset = queryset.filter(*filters).order_by(*order).limit(limit)
@@ -228,7 +250,8 @@ class Service(MethodView):
             resources = queryset.all()
         return [r.to_dict() for r in resources]
 
-    def _export(self, collection):
+    @staticmethod
+    def _export(collection):
         """Return a CSV of the resources in *collection*.
 
         :param list collection: A list of resources represented by dicts
@@ -240,7 +263,6 @@ class Service(MethodView):
         response = make_response(faux_csv)
         response.mimetype = 'text/csv'
         return response
-
 
     @staticmethod
     def _no_content_response():
