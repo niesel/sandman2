@@ -12,6 +12,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 db = SQLAlchemy()
 
+
 class Model(object):
 
     """The sandman2 Model class is the base class for all RESTful resources.
